@@ -8,7 +8,10 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #fff0f5;
+            background-image: radial-gradient(#ff80ab 15%, transparent 16%), radial-gradient(#ff80ab 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -16,17 +19,19 @@
             padding: 20px;
         }
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.92);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.25);
             padding: 30px;
             max-width: 500px;
             width: 100%;
+            backdrop-filter: blur(10px);
         }
         h1 {
             text-align: center;
-            color: #667eea;
+            color: #e91e63;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.4);
         }
         .input-group {
             display: flex;
@@ -36,13 +41,15 @@
         #taskInput {
             flex: 1;
             padding: 12px;
-            border: 2px solid #667eea;
+            border: 2px solid #ff80ab;
             border-radius: 10px;
             font-size: 16px;
+            outline: none;
         }
+        #taskInput:focus { border-color: #e91e63; }
         #addBtn {
             padding: 12px 24px;
-            background: #667eea;
+            background: #e91e63;
             color: white;
             border: none;
             border-radius: 10px;
@@ -50,7 +57,7 @@
             font-size: 16px;
             font-weight: bold;
         }
-        #addBtn:hover { background: #5568d3; }
+        #addBtn:hover { background: #c2185b; }
         .filters {
             display: flex;
             gap: 10px;
@@ -59,13 +66,14 @@
         .filter-btn {
             flex: 1;
             padding: 8px;
-            background: #f0f0f0;
-            border: none;
+            background: #ffe0ec;
+            border: 1px solid #ff80ab;
             border-radius: 8px;
             cursor: pointer;
+            color: #c2185b;
         }
         .filter-btn.active {
-            background: #667eea;
+            background: #e91e63;
             color: white;
         }
         #taskList {
@@ -76,16 +84,18 @@
             display: flex;
             align-items: center;
             padding: 12px;
-            background: #f8f9fa;
+            background: #fff0f3;
+            border: 1px solid #ffd1dc;
             margin-bottom: 8px;
             border-radius: 10px;
             transition: all 0.3s;
         }
-        .task-item:hover { transform: translateX(5px); }
+        .task-item:hover { transform: translateX(5px); background: #ffe0ec; }
         .task-item.completed {
-            background: #d4edda;
+            background: #fce4ec;
             text-decoration: line-through;
             opacity: 0.8;
+            border-color: #f8bbd0;
         }
         .task-item input[type="checkbox"] {
             margin-right: 12px;
@@ -95,7 +105,7 @@
         }
         .task-text { flex: 1; }
         .delete-btn {
-            background: #dc3545;
+            background: #e91e63;
             color: white;
             border: none;
             padding: 6px 12px;
@@ -103,25 +113,26 @@
             cursor: pointer;
             font-size: 12px;
         }
-        .delete-btn:hover { background: #c82333; }
+        .delete-btn:hover { background: #c2185b; }
         .stats {
             text-align: center;
             padding: 10px;
-            background: #f8f9fa;
+            background: #fff0f3;
+            border: 1px solid #ffd1dc;
             border-radius: 10px;
             margin-bottom: 15px;
-            color: #666;
+            color: #c2185b;
         }
         #gameSection {
             display: none;
             text-align: center;
         }
         #gameSection h2 {
-            color: #667eea;
+            color: #e91e63;
             margin-bottom: 15px;
         }
         #gameCanvas {
-            border: 3px solid #667eea;
+            border: 3px solid #ff80ab;
             border-radius: 10px;
             background: #1a1a2e;
             display: block;
@@ -135,15 +146,15 @@
         }
         .game-btn {
             padding: 10px 20px;
-            background: #667eea;
+            background: #e91e63;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
         }
-        .game-btn:hover { background: #5568d3; }
-        .game-btn.active { outline: 3px solid #764ba2; }
+        .game-btn:hover { background: #c2185b; }
+        .game-btn.active { outline: 3px solid #ff80ab; }
         .mobile-controls {
             display: none;
             margin-top: 15px;
@@ -151,7 +162,7 @@
         .mobile-controls button {
             padding: 15px;
             font-size: 20px;
-            background: #667eea;
+            background: #e91e63;
             color: white;
             border: none;
             border-radius: 8px;
@@ -209,7 +220,7 @@
             </div>
 
             <div id="tetrisGame" style="display:none;">
-                <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+                <canvas id="tetrisCanvas" width="300" height="600" style="border: 3px solid #ff80ab; border-radius: 10px; display: block; margin: 0 auto 15px;"></canvas>
                 <div class="game-controls">
                     <button class="game-btn" id="startTetrisBtn">Mulai</button>
                     <button class="game-btn" id="resetTetrisBtn">Reset</button>
