@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App + Mini Game</title>
+    <title>Todo App + Games</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -143,6 +143,7 @@
             font-size: 14px;
         }
         .game-btn:hover { background: #5568d3; }
+        .game-btn.active { outline: 3px solid #764ba2; }
         .mobile-controls {
             display: none;
             margin-top: 15px;
@@ -184,20 +185,44 @@
         <div id="gameSection">
             <h2>🎮 Selamat! 🎉</h2>
             <p style="margin-bottom: 15px; color: #666;">Semua tugas selesai! Main game dulu:</p>
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            <div class="game-controls">
-                <button class="game-btn" id="startGameBtn">Mulai Game</button>
-                <button class="game-btn" id="resetGameBtn">Reset</button>
+            
+            <div class="game-selector" style="display:flex;gap:10px;justify-content:center;margin-bottom:15px;">
+                <button class="game-btn active" id="snakeTab">🐍 Snake</button>
+                <button class="game-btn" id="tetrisTab">🧱 Tetris</button>
             </div>
-            <div class="mobile-controls">
-                <div></div>
-                <button id="upBtn">↑</button>
-                <div></div>
-                <button id="leftBtn">←</button>
-                <button id="downBtn">↓</button>
-                <button id="rightBtn">→</button>
+
+            <div id="snakeGame">
+                <canvas id="gameCanvas" width="400" height="400"></canvas>
+                <div class="game-controls">
+                    <button class="game-btn" id="startGameBtn">Mulai Game</button>
+                    <button class="game-btn" id="resetGameBtn">Reset</button>
+                </div>
+                <div class="mobile-controls">
+                    <div></div>
+                    <button id="upBtn">↑</button>
+                    <div></div>
+                    <button id="leftBtn">←</button>
+                    <button id="downBtn">↓</button>
+                    <button id="rightBtn">→</button>
+                </div>
+                <p style="margin-top: 10px; color: #666;">Skor: <span id="score">0</span></p>
             </div>
-            <p style="margin-top: 10px; color: #666;">Skor: <span id="score">0</span></p>
+
+            <div id="tetrisGame" style="display:none;">
+                <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+                <div class="game-controls">
+                    <button class="game-btn" id="startTetrisBtn">Mulai</button>
+                    <button class="game-btn" id="resetTetrisBtn">Reset</button>
+                </div>
+                <div class="mobile-controls">
+                    <button id="tLeftBtn">←</button>
+                    <button id="tRotateBtn">↻</button>
+                    <button id="tRightBtn">→</button>
+                    <button id="tDownBtn">↓</button>
+                    <button id="tDropBtn">⤓</button>
+                </div>
+                <p style="margin-top: 10px; color: #666;">Skor: <span id="tetrisScore">0</span> | Level: <span id="tetrisLevel">1</span></p>
+            </div>
         </div>
     </div>
 
@@ -400,7 +425,249 @@
             document.getElementById('leftBtn').addEventListener('click', () => { if (gameRunning && direction.x === 0) direction = { x: -1, y: 0 }; });
             document.getElementById('rightBtn').addEventListener('click', () => { if (gameRunning && direction.x === 0) direction = { x: 1, y: 0 }; });
 
-            drawGame();
+            // Game tabs
+            const snakeTab = document.getElementById('snakeTab');
+            const tetrisTab = document.getElementById('tetrisTab');
+            const snakeGame = document.getElementById('snakeGame');
+            const tetrisGame = document.getElementById('tetrisGame');
+
+            snakeTab.addEventListener('click', () => {
+                snakeTab.classList.add('active');
+                tetrisTab.classList.remove('active');
+                snakeGame.style.display = 'block';
+                tetrisGame.style.display = 'none';
+                clearInterval(tetrisLoop);
+                tetrisRunning = false;
+            });
+
+            tetrisTab.addEventListener('click', () => {
+                tetrisTab.classList.add('active');
+                snakeTab.classList.remove('active');
+                tetrisGame.style.display = 'block';
+                snakeGame.style.display = 'none';
+                clearInterval(gameLoop);
+                gameRunning = false;
+                drawTetrisBoard();
+            });
+
+            // Tetris Game
+            const tCanvas = document.getElementById('tetrisCanvas');
+            const tCtx = tCanvas.getContext('2d');
+            const startTetrisBtn = document.getElementById('startTetrisBtn');
+            const resetTetrisBtn = document.getElementById('resetTetrisBtn');
+            const tetrisScoreDisplay = document.getElementById('tetrisScore');
+            const tetrisLevelDisplay = document.getElementById('tetrisLevel');
+
+            const COLS = 10;
+            const ROWS = 20;
+            const BLOCK = 30;
+            const tGrid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+
+            const SHAPES = [
+                [[1,1,1,1]],
+                [[1,1],[1,1]],
+                [[0,1,0],[1,1,1]],
+                [[1,0,0],[1,1,1]],
+                [[0,0,1],[1,1,1]],
+                [[0,1,1],[1,1,0]],
+                [[1,1,0],[0,1,1]]
+            ];
+
+            const COLORS = [0, '#00f0f0', '#f0f000', '#a000f0', '#0000f0', '#f0a000', '#00f000', '#f00000'];
+
+            let currentPiece = null;
+            let tetrisX = 3;
+            let tetrisY = 0;
+            let tetrisScore = 0;
+            let tetrisLevel = 1;
+            let tetrisLoop = null;
+            let tetrisRunning = false;
+            let dropInterval = 800;
+
+            function newPiece() {
+                const shapeIndex = Math.floor(Math.random() * SHAPES.length) + 1;
+                currentPiece = SHAPES[shapeIndex - 1];
+                tetrisX = Math.floor((COLS - currentPiece[0].length) / 2);
+                tetrisY = 0;
+                if (collision(tetrisX, tetrisY, currentPiece)) {
+                    tetrisGameOver();
+                }
+            }
+
+            function collision(x, y, piece) {
+                for (let r = 0; r < piece.length; r++) {
+                    for (let c = 0; c < piece[r].length; c++) {
+                        if (piece[r][c]) {
+                            const newX = x + c;
+                            const newY = y + r;
+                            if (newX < 0 || newX >= COLS || newY >= ROWS) return true;
+                            if (newY >= 0 && tGrid[newY][newX]) return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            function mergePiece() {
+                for (let r = 0; r < currentPiece.length; r++) {
+                    for (let c = 0; c < currentPiece[r].length; c++) {
+                        if (currentPiece[r][c]) {
+                            const y = tetrisY + r;
+                            const x = tetrisX + c;
+                            if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+                                tGrid[y][x] = currentPiece[r][c];
+                            }
+                        }
+                    }
+                }
+            }
+
+            function rotatePiece() {
+                const rotated = currentPiece[0].map((_, i) => currentPiece.map(row => row[i]).reverse());
+                if (!collision(tetrisX, tetrisY, rotated)) {
+                    currentPiece = rotated;
+                }
+            }
+
+            function clearLines() {
+                let lines = 0;
+                for (let r = ROWS - 1; r >= 0; r--) {
+                    if (tGrid[r].every(cell => cell !== 0)) {
+                        tGrid.splice(r, 1);
+                        tGrid.unshift(Array(COLS).fill(0));
+                        lines++;
+                        r++;
+                    }
+                }
+                if (lines > 0) {
+                    tetrisScore += [0, 100, 300, 500, 800][lines] * tetrisLevel;
+                    tetrisLevel = Math.floor(tetrisScore / 1000) + 1;
+                    dropInterval = Math.max(100, 800 - (tetrisLevel - 1) * 80);
+                    tetrisScoreDisplay.textContent = tetrisScore;
+                    tetrisLevelDisplay.textContent = tetrisLevel;
+                }
+            }
+
+            function drawTetrisBlock(x, y, colorIndex) {
+                tCtx.fillStyle = COLORS[colorIndex] || '#333';
+                tCtx.fillRect(x * BLOCK, y * BLOCK, BLOCK - 1, BLOCK - 1);
+                tCtx.fillStyle = 'rgba(255,255,255,0.2)';
+                tCtx.fillRect(x * BLOCK, y * BLOCK, BLOCK - 1, 4);
+                tCtx.fillRect(x * BLOCK, y * BLOCK, 4, BLOCK - 1);
+            }
+
+            function drawTetrisBoard() {
+                tCtx.fillStyle = '#1a1a2e';
+                tCtx.fillRect(0, 0, tCanvas.width, tCanvas.height);
+
+                for (let r = 0; r < ROWS; r++) {
+                    for (let c = 0; c < COLS; c++) {
+                        if (tGrid[r][c]) {
+                            drawTetrisBlock(c, r, tGrid[r][c]);
+                        }
+                    }
+                }
+
+                if (currentPiece) {
+                    for (let r = 0; r < currentPiece.length; r++) {
+                        for (let c = 0; c < currentPiece[r].length; c++) {
+                            if (currentPiece[r][c]) {
+                                drawTetrisBlock(tetrisX + c, tetrisY + r, currentPiece[r][c]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            function tetrisGameOver() {
+                clearInterval(tetrisLoop);
+                tetrisRunning = false;
+                tCtx.fillStyle = 'rgba(0,0,0,0.7)';
+                tCtx.fillRect(0, 0, tCanvas.width, tCanvas.height);
+                tCtx.fillStyle = '#fff';
+                tCtx.font = '30px Arial';
+                tCtx.textAlign = 'center';
+                tCtx.fillText('Game Over!', tCanvas.width / 2, tCanvas.height / 2);
+                tCtx.font = '20px Arial';
+                tCtx.fillText('Skor: ' + tetrisScore, tCanvas.width / 2, tCanvas.height / 2 + 30);
+            }
+
+            function tetrisUpdate() {
+                if (!collision(tetrisX, tetrisY + 1, currentPiece)) {
+                    tetrisY++;
+                } else {
+                    mergePiece();
+                    clearLines();
+                    newPiece();
+                }
+                drawTetrisBoard();
+            }
+
+            function startTetris() {
+                if (tetrisRunning) return;
+                tGrid.forEach(row => row.fill(0));
+                tetrisScore = 0;
+                tetrisLevel = 1;
+                dropInterval = 800;
+                tetrisScoreDisplay.textContent = '0';
+                tetrisLevelDisplay.textContent = '1';
+                newPiece();
+                tetrisRunning = true;
+                drawTetrisBoard();
+                tetrisLoop = setInterval(tetrisUpdate, dropInterval);
+            }
+
+            function resetTetris() {
+                clearInterval(tetrisLoop);
+                tetrisRunning = false;
+                tGrid.forEach(row => row.fill(0));
+                tetrisScore = 0;
+                tetrisLevel = 1;
+                dropInterval = 800;
+                tetrisScoreDisplay.textContent = '0';
+                tetrisLevelDisplay.textContent = '1';
+                currentPiece = null;
+                drawTetrisBoard();
+            }
+
+            startTetrisBtn.addEventListener('click', startTetris);
+            resetTetrisBtn.addEventListener('click', resetTetris);
+
+            document.addEventListener('keydown', (e) => {
+                if (!tetrisRunning || tetrisGame.style.display === 'none') return;
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        if (!collision(tetrisX - 1, tetrisY, currentPiece)) tetrisX--;
+                        break;
+                    case 'ArrowRight':
+                        if (!collision(tetrisX + 1, tetrisY, currentPiece)) tetrisX++;
+                        break;
+                    case 'ArrowDown':
+                        if (!collision(tetrisX, tetrisY + 1, currentPiece)) tetrisY++;
+                        tetrisScore += 1;
+                        tetrisScoreDisplay.textContent = tetrisScore;
+                        break;
+                    case 'ArrowUp':
+                        rotatePiece();
+                        break;
+                    case ' ':
+                        while (!collision(tetrisX, tetrisY + 1, currentPiece)) {
+                            tetrisY++;
+                            tetrisScore += 2;
+                        }
+                        tetrisScoreDisplay.textContent = tetrisScore;
+                        break;
+                }
+                drawTetrisBoard();
+            });
+
+            document.getElementById('tLeftBtn').addEventListener('click', () => { if (tetrisRunning && !collision(tetrisX - 1, tetrisY, currentPiece)) tetrisX--; drawTetrisBoard(); });
+            document.getElementById('tRightBtn').addEventListener('click', () => { if (tetrisRunning && !collision(tetrisX + 1, tetrisY, currentPiece)) tetrisX++; drawTetrisBoard(); });
+            document.getElementById('tRotateBtn').addEventListener('click', () => { if (tetrisRunning) rotatePiece(); drawTetrisBoard(); });
+            document.getElementById('tDownBtn').addEventListener('click', () => { if (tetrisRunning && !collision(tetrisX, tetrisY + 1, currentPiece)) { tetrisY++; tetrisScore += 1; tetrisScoreDisplay.textContent = tetrisScore; } drawTetrisBoard(); });
+            document.getElementById('tDropBtn').addEventListener('click', () => { if (tetrisRunning) { while (!collision(tetrisX, tetrisY + 1, currentPiece)) { tetrisY++; tetrisScore += 2; } tetrisScoreDisplay.textContent = tetrisScore; drawTetrisBoard(); } });
+
+            drawTetrisBoard();
             renderTasks();
         })();
     </script>
