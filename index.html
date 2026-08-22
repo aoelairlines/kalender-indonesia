@@ -1,686 +1,207 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App + Games</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fff0f5;
-            background-image: radial-gradient(#ff80ab 15%, transparent 16%), radial-gradient(#ff80ab 15%, transparent 16%);
-            background-size: 60px 60px;
-            background-position: 0 0, 30px 30px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.92);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(255, 105, 180, 0.25);
-            padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            backdrop-filter: blur(10px);
-        }
-        h1 {
-            text-align: center;
-            color: #e91e63;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.4);
-        }
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        #taskInput {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ff80ab;
-            border-radius: 10px;
-            font-size: 16px;
-            outline: none;
-        }
-        #taskInput:focus { border-color: #e91e63; }
-        #addBtn {
-            padding: 12px 24px;
-            background: #e91e63;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        #addBtn:hover { background: #c2185b; }
-        .filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .filter-btn {
-            flex: 1;
-            padding: 8px;
-            background: #ffe0ec;
-            border: 1px solid #ff80ab;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #c2185b;
-        }
-        .filter-btn.active {
-            background: #e91e63;
-            color: white;
-        }
-        #taskList {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-        .task-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: #fff0f3;
-            border: 1px solid #ffd1dc;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-        .task-item:hover { transform: translateX(5px); background: #ffe0ec; }
-        .task-item.completed {
-            background: #fce4ec;
-            text-decoration: line-through;
-            opacity: 0.8;
-            border-color: #f8bbd0;
-        }
-        .task-item input[type="checkbox"] {
-            margin-right: 12px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-        .task-text { flex: 1; }
-        .delete-btn {
-            background: #e91e63;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .delete-btn:hover { background: #c2185b; }
-        .stats {
-            text-align: center;
-            padding: 10px;
-            background: #fff0f3;
-            border: 1px solid #ffd1dc;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            color: #c2185b;
-        }
-        #gameSection {
-            display: none;
-            text-align: center;
-        }
-        #gameSection h2 {
-            color: #e91e63;
-            margin-bottom: 15px;
-        }
-        #gameCanvas {
-            border: 3px solid #ff80ab;
-            border-radius: 10px;
-            background: #1a1a2e;
-            display: block;
-            margin: 0 auto 15px;
-        }
-        .game-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .game-btn {
-            padding: 10px 20px;
-            background: #e91e63;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .game-btn:hover { background: #c2185b; }
-        .game-btn.active { outline: 3px solid #ff80ab; }
-        .mobile-controls {
-            display: none;
-            margin-top: 15px;
-        }
-        .mobile-controls button {
-            padding: 15px;
-            font-size: 20px;
-            background: #e91e63;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        @media (max-width: 600px) {
-            .mobile-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kalender Indonesia</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body { background: #f4f7fb; min-height: 100vh; display: flex; justify-content: center; padding: 24px; }
+  .calendar-wrap { width: 100%; max-width: 900px; }
+  h1 { text-align: center; color: #1a2b4c; margin-bottom: 18px; }
+  .header { display: flex; justify-content: space-between; align-items: center; background: #1a2b4c; color: white; padding: 14px 18px; border-radius: 12px; margin-bottom: 14px; }
+  .header button { background: #fff; border: none; color: #1a2b4c; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  .header button:hover { background: #dde4f5; }
+  .header .month-label { font-size: 1.2rem; font-weight: bold; }
+  .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .weekdays div { text-align: center; padding: 8px; font-weight: bold; color: #4a5a7a; }
+  .day { background: white; min-height: 90px; padding: 8px; border-radius: 8px; position: relative; cursor: pointer; border: 2px solid transparent; transition: 0.15s; }
+  .day:hover { border-color: #7aa3ff; }
+  .day.today { border-color: #ff8c00; background: #fff7e6; }
+  .day.holiday { background: #ffe6e6; }
+  .day.has-birthday { background: #fff7cc; }
+  .day .num { font-weight: bold; font-size: 0.95rem; }
+  .day .tag { font-size: 0.68rem; margin-top: 4px; color: #b73e3e; word-break: break-word; }
+  .day .bd-tag { font-size: 0.68rem; margin-top: 2px; color: #8a6d00; word-break: break-word; font-weight: bold; }
+  .day .today-tag { position: absolute; top: 6px; right: 6px; background: #ff8c00; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; }
+  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+  .modal-bg.show { display: flex; }
+  .modal { background: white; padding: 22px; border-radius: 12px; width: 90%; max-width: 400px; }
+  .modal h3 { margin-bottom: 10px; color: #1a2b4c; }
+  .modal input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px; }
+  .modal .actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal button { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; }
+  .modal .save { background: #1a2b4c; color: white; }
+  .modal .cancel { background: #ddd; color: #333; }
+  .modal .delete { background: #c0392b; color: white; }
+  #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 200; display: none; }
+  #birthdayMsg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 3rem; font-weight: bold; color: #ff4081; text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(0,0,0,0.2); z-index: 201; transition: transform 0.4s ease; pointer-events: none; white-space: nowrap; }
+  #birthdayMsg.show { transform: translate(-50%, -50%) scale(1); }
+  .legend { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .legend span { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 5px; }
+  @media (max-width: 600px) { .day { min-height: 60px; font-size: 0.8rem; } }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>📝 Todo App</h1>
-        
-        <div class="input-group">
-            <input type="text" id="taskInput" placeholder="Tambah tugas baru...">
-            <button id="addBtn">Tambah</button>
-        </div>
+<div class="calendar-wrap">
+  <h1>📅 Kalender Indonesia</h1>
+  <div class="header">
+    <button id="prev">◀</button>
+    <div class="month-label" id="monthLabel"></div>
+    <button id="next">▶</button>
+  </div>
+  <div class="weekdays">
+    <div>Ming</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+  </div>
+  <div class="days" id="days"></div>
+  <div class="legend">
+    <div><span style="background:#ffe6e6"></span>Hari Nasional</div>
+    <div><span style="background:#fff7cc"></span>Ulang Tahun</div>
+    <div><span style="background:#fff7e6;border:2px solid #ff8c00"></span>Hari Ini</div>
+  </div>
+</div>
 
-        <div class="filters">
-            <button class="filter-btn active" data-filter="all">Semua</button>
-            <button class="filter-btn" data-filter="active">Aktif</button>
-            <button class="filter-btn" data-filter="completed">Selesai</button>
-        </div>
-
-        <div class="stats" id="stats">0 tugas aktif</div>
-
-        <ul id="taskList"></ul>
-
-        <div id="gameSection">
-            <h2>🎮 Selamat! 🎉</h2>
-            <p style="margin-bottom: 15px; color: #666;">Semua tugas selesai! Main game dulu:</p>
-            
-            <div class="game-selector" style="display:flex;gap:10px;justify-content:center;margin-bottom:15px;">
-                <button class="game-btn active" id="snakeTab">🐍 Snake</button>
-                <button class="game-btn" id="tetrisTab">🧱 Tetris</button>
-            </div>
-
-            <div id="snakeGame">
-                <canvas id="gameCanvas" width="400" height="400"></canvas>
-                <div class="game-controls">
-                    <button class="game-btn" id="startGameBtn">Mulai Game</button>
-                    <button class="game-btn" id="resetGameBtn">Reset</button>
-                </div>
-                <div class="mobile-controls">
-                    <div></div>
-                    <button id="upBtn">↑</button>
-                    <div></div>
-                    <button id="leftBtn">←</button>
-                    <button id="downBtn">↓</button>
-                    <button id="rightBtn">→</button>
-                </div>
-                <p style="margin-top: 10px; color: #666;">Skor: <span id="score">0</span></p>
-            </div>
-
-            <div id="tetrisGame" style="display:none;">
-                <canvas id="tetrisCanvas" width="300" height="600" style="border: 3px solid #ff80ab; border-radius: 10px; display: block; margin: 0 auto 15px;"></canvas>
-                <div class="game-controls">
-                    <button class="game-btn" id="startTetrisBtn">Mulai</button>
-                    <button class="game-btn" id="resetTetrisBtn">Reset</button>
-                </div>
-                <div class="mobile-controls">
-                    <button id="tLeftBtn">←</button>
-                    <button id="tRotateBtn">↻</button>
-                    <button id="tRightBtn">→</button>
-                    <button id="tDownBtn">↓</button>
-                    <button id="tDropBtn">⤓</button>
-                </div>
-                <p style="margin-top: 10px; color: #666;">Skor: <span id="tetrisScore">0</span> | Level: <span id="tetrisLevel">1</span></p>
-            </div>
-        </div>
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modalTitle">Tambah Catatan</h3>
+    <input id="noteInput" placeholder="Nama teman / catatan..." />
+    <div class="actions">
+      <button class="delete" id="deleteBtn" style="display:none">Hapus</button>
+      <button class="cancel" id="cancelBtn">Batal</button>
+      <button class="save" id="saveBtn">Simpan</button>
     </div>
+  </div>
+</div>
 
-    <script>
-        (function() {
-            const taskInput = document.getElementById('taskInput');
-            const addBtn = document.getElementById('addBtn');
-            const taskList = document.getElementById('taskList');
-            const stats = document.getElementById('stats');
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            const gameSection = document.getElementById('gameSection');
+<div id="confetti"></div>
+<div id="birthdayMsg">🎉 Happy Birthday! 🎉</div>
 
-            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-            let currentFilter = 'all';
+<script>
+const holidays = {
+  '01-01': 'Tahun Baru Masehi',
+  '01-06': 'Hari Raya Nyepi (tetap)',
+  '02-14': 'Hari Kasih Sayang',
+  '03-08': 'Hari Perempuan Internasional',
+  '04-22': 'Hari Bumi',
+  '05-01': 'Hari Buruh Internasional',
+  '05-01': 'Hari Buruh Internasional',
+  '05-05': 'Hari Pahlawan (tetap)',
+  '06-01': 'Hari Lahir Pancasila',
+  '08-17': 'Hari Kemerdekaan RI',
+  '10-02': 'Hari Batik',
+  '10-05': 'Hari Hari Santri',
+  '10-10': 'Hari Kesaktian Pancasila',
+  '11-10': 'Hari Pahlawan (tetap)',
+  '12-22': 'Hari Ibu',
+  '12-25': 'Hari Raya Natal'
+};
+const indoMonths = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+let current = new Date();
+let birthdays = JSON.parse(localStorage.getItem('birthdays') || '{}');
+let selectedDate = null;
 
-            function saveTasks() {
-                localStorage.setItem('tasks', JSON.stringify(tasks));
-            }
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+function dateKey(d){ return pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
 
-            function renderTasks() {
-                taskList.innerHTML = '';
-                const filtered = tasks.filter(t => {
-                    if (currentFilter === 'active') return !t.completed;
-                    if (currentFilter === 'completed') return t.completed;
-                    return true;
-                });
+function render(){
+  const y = current.getFullYear(), m = current.getMonth();
+  document.getElementById('monthLabel').innerText = indoMonths[m] + ' ' + y;
+  const first = new Date(y,m,1);
+  const startDay = (first.getDay()+6)%7;
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const today = new Date();
+  let html = '';
+  for(let i=0;i<startDay;i++) html += '<div></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const dt = new Date(y,m,d);
+    const key = dateKey(dt);
+    const isToday = dt.toDateString() === today.toDateString();
+    const hol = holidays[key];
+    const bds = birthdays[key];
+    let cls = 'day';
+    if(hol) cls += ' holiday';
+    if(bds && bds.length) cls += ' has-birthday';
+    if(isToday) cls += ' today';
+    html += `<div class="${cls}" onclick="openModal(${y},${m},${d})">
+      <div class="num">${d}</div>
+      ${isToday?'<div class="today-tag">HARI INI</div>':''}
+      ${hol?`<div class="tag">${hol}</div>`:''}
+      ${bds? bds.map(b=>`<div class="bd-tag">🎂 ${b}</div>`).join(''):''}
+    </div>`;
+  }
+  document.getElementById('days').innerHTML = html;
+}
 
-                filtered.forEach((task, index) => {
-                    const li = document.createElement('li');
-                    li.className = 'task-item' + (task.completed ? ' completed' : '');
-                    li.innerHTML = `
-                        <input type="checkbox" ${task.completed ? 'checked' : ''} data-index="${index}">
-                        <span class="task-text">${escapeHtml(task.text)}</span>
-                        <button class="delete-btn" data-index="${index}">Hapus</button>
-                    `;
-                    taskList.appendChild(li);
-                });
+function openModal(y,m,d){
+  const dt = new Date(y,m,d);
+  selectedDate = dateKey(dt);
+  const bds = birthdays[selectedDate] || [];
+  const inp = document.getElementById('noteInput');
+  document.getElementById('modalTitle').innerText = 'Catatan '+pad(d)+' '+indoMonths[m]+' '+y;
+  inp.value = bds.length ? bds[0] : '';
+  document.getElementById('deleteBtn').style.display = bds.length ? 'inline-block' : 'none';
+  document.getElementById('modal').classList.add('show');
+}
 
-                const activeCount = tasks.filter(t => !t.completed).length;
-                stats.textContent = `${activeCount} tugas aktif`;
+function saveNote(){
+  const val = document.getElementById('noteInput').value.trim();
+  if(val){ birthdays[selectedDate] = [val]; }
+  else { delete birthdays[selectedDate]; }
+  localStorage.setItem('birthdays', JSON.stringify(birthdays));
+  closeModal();
+  render();
+  if(val) showConfetti();
+}
 
-                if (tasks.length > 0 && tasks.every(t => t.completed)) {
-                    gameSection.style.display = 'block';
-                } else {
-                    gameSection.style.display = 'none';
-                }
-            }
+function deleteNote(){
+  delete birthdays[selectedDate];
+  localStorage.setItem('birthdays', JSON.stringify(birthdays));
+  closeModal();
+  render();
+}
 
-            function escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
+function closeModal(){
+  document.getElementById('modal').classList.remove('show');
+  selectedDate = null;
+}
 
-            addBtn.addEventListener('click', () => {
-                const text = taskInput.value.trim();
-                if (!text) return alert('Masukkan tugas!');
-                tasks.push({ text, completed: false });
-                saveTasks();
-                taskInput.value = '';
-                renderTasks();
-            });
+function showConfetti(){
+  const c = document.getElementById('confetti');
+  const msg = document.getElementById('birthdayMsg');
+  c.innerHTML = ''; c.style.display = 'block'; msg.classList.add('show');
+  const colors = ['#ff4081','#ffea00','#00e676','#2979ff','#ff6d00','#d500f9'];
+  for(let i=0;i<120;i++){
+    const el = document.createElement('div');
+    const left = Math.random()*100;
+    const anim = Math.random()*3+2;
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    const size = Math.random()*10+5;
+    el.style.cssText = `position:absolute;top:-20px;left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?'50%':'0'};animation:fall ${anim}s linear forwards;`;
+    c.appendChild(el);
+  }
+  setTimeout(()=>{ c.style.display='none'; msg.classList.remove('show'); }, 4000);
+}
 
-            taskInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addBtn.click();
-            });
+const style = document.createElement('style');
+style.innerHTML = `@keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }`;
+document.head.appendChild(style);
 
-            taskList.addEventListener('click', (e) => {
-                if (e.target.type === 'checkbox') {
-                    const idx = parseInt(e.target.dataset.index);
-                    tasks[idx].completed = e.target.checked;
-                    saveTasks();
-                    renderTasks();
-                }
-                if (e.target.classList.contains('delete-btn')) {
-                    const idx = parseInt(e.target.dataset.index);
-                    tasks.splice(idx, 1);
-                    saveTasks();
-                    renderTasks();
-                }
-            });
+document.getElementById('prev').onclick = ()=>{ current.setMonth(current.getMonth()-1); render(); };
+document.getElementById('next').onclick = ()=>{ current.setMonth(current.getMonth()+1); render(); };
+document.getElementById('saveBtn').onclick = saveNote;
+document.getElementById('cancelBtn').onclick = closeModal;
+document.getElementById('deleteBtn').onclick = deleteNote;
+document.getElementById('modal').onclick = (e)=>{ if(e.target.id==='modal') closeModal(); };
 
-            filterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    filterBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    renderTasks();
-                });
-            });
+render();
 
-            // Snake Game
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
-            const startGameBtn = document.getElementById('startGameBtn');
-            const resetGameBtn = document.getElementById('resetGameBtn');
-            const scoreDisplay = document.getElementById('score');
-
-            const gridSize = 20;
-            const tileCount = canvas.width / gridSize;
-            let snake = [{ x: 10, y: 10 }];
-            let direction = { x: 1, y: 0 };
-            let food = { x: 15, y: 15 };
-            let score = 0;
-            let gameLoop = null;
-            let gameRunning = false;
-
-            function drawGame() {
-                ctx.fillStyle = '#1a1a2e';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = '#4ecca3';
-                snake.forEach(segment => {
-                    ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
-                });
-
-                ctx.fillStyle = '#ff6b6b';
-                ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
-
-                scoreDisplay.textContent = score;
-            }
-
-            function updateGame() {
-                const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-
-                if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-                    gameOver();
-                    return;
-                }
-
-                if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                    gameOver();
-                    return;
-                }
-
-                snake.unshift(head);
-
-                if (head.x === food.x && head.y === food.y) {
-                    score += 10;
-                    food = {
-                        x: Math.floor(Math.random() * tileCount),
-                        y: Math.floor(Math.random() * tileCount)
-                    };
-                } else {
-                    snake.pop();
-                }
-
-                drawGame();
-            }
-
-            function gameOver() {
-                clearInterval(gameLoop);
-                gameRunning = false;
-                ctx.fillStyle = 'rgba(0,0,0,0.7)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#fff';
-                ctx.font = '30px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('Game Over!', canvas.width / 2, canvas.height / 2);
-                ctx.font = '20px Arial';
-                ctx.fillText('Skor: ' + score, canvas.width / 2, canvas.height / 2 + 30);
-            }
-
-            function startGame() {
-                if (gameRunning) return;
-                snake = [{ x: 10, y: 10 }];
-                direction = { x: 1, y: 0 };
-                score = 0;
-                food = { x: 15, y: 15 };
-                gameRunning = true;
-                drawGame();
-                gameLoop = setInterval(updateGame, 150);
-            }
-
-            function resetGame() {
-                clearInterval(gameLoop);
-                gameRunning = false;
-                snake = [{ x: 10, y: 10 }];
-                direction = { x: 1, y: 0 };
-                score = 0;
-                food = { x: 15, y: 15 };
-                drawGame();
-            }
-
-            startGameBtn.addEventListener('click', startGame);
-            resetGameBtn.addEventListener('click', resetGame);
-
-            document.addEventListener('keydown', (e) => {
-                if (!gameRunning) return;
-                switch(e.key) {
-                    case 'ArrowUp': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
-                    case 'ArrowDown': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
-                    case 'ArrowLeft': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
-                    case 'ArrowRight': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
-                }
-            });
-
-            document.getElementById('upBtn').addEventListener('click', () => { if (gameRunning && direction.y === 0) direction = { x: 0, y: -1 }; });
-            document.getElementById('downBtn').addEventListener('click', () => { if (gameRunning && direction.y === 0) direction = { x: 0, y: 1 }; });
-            document.getElementById('leftBtn').addEventListener('click', () => { if (gameRunning && direction.x === 0) direction = { x: -1, y: 0 }; });
-            document.getElementById('rightBtn').addEventListener('click', () => { if (gameRunning && direction.x === 0) direction = { x: 1, y: 0 }; });
-
-            // Game tabs
-            const snakeTab = document.getElementById('snakeTab');
-            const tetrisTab = document.getElementById('tetrisTab');
-            const snakeGame = document.getElementById('snakeGame');
-            const tetrisGame = document.getElementById('tetrisGame');
-
-            snakeTab.addEventListener('click', () => {
-                snakeTab.classList.add('active');
-                tetrisTab.classList.remove('active');
-                snakeGame.style.display = 'block';
-                tetrisGame.style.display = 'none';
-                clearInterval(tetrisLoop);
-                tetrisRunning = false;
-            });
-
-            tetrisTab.addEventListener('click', () => {
-                tetrisTab.classList.add('active');
-                snakeTab.classList.remove('active');
-                tetrisGame.style.display = 'block';
-                snakeGame.style.display = 'none';
-                clearInterval(gameLoop);
-                gameRunning = false;
-                drawTetrisBoard();
-            });
-
-            // Tetris Game
-            const tCanvas = document.getElementById('tetrisCanvas');
-            const tCtx = tCanvas.getContext('2d');
-            const startTetrisBtn = document.getElementById('startTetrisBtn');
-            const resetTetrisBtn = document.getElementById('resetTetrisBtn');
-            const tetrisScoreDisplay = document.getElementById('tetrisScore');
-            const tetrisLevelDisplay = document.getElementById('tetrisLevel');
-
-            const COLS = 10;
-            const ROWS = 20;
-            const BLOCK = 30;
-            const tGrid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-
-            const SHAPES = [
-                [[1,1,1,1]],
-                [[1,1],[1,1]],
-                [[0,1,0],[1,1,1]],
-                [[1,0,0],[1,1,1]],
-                [[0,0,1],[1,1,1]],
-                [[0,1,1],[1,1,0]],
-                [[1,1,0],[0,1,1]]
-            ];
-
-            const COLORS = [0, '#00f0f0', '#f0f000', '#a000f0', '#0000f0', '#f0a000', '#00f000', '#f00000'];
-
-            let currentPiece = null;
-            let tetrisX = 3;
-            let tetrisY = 0;
-            let tetrisScore = 0;
-            let tetrisLevel = 1;
-            let tetrisLoop = null;
-            let tetrisRunning = false;
-            let dropInterval = 800;
-
-            function newPiece() {
-                const shapeIndex = Math.floor(Math.random() * SHAPES.length) + 1;
-                currentPiece = SHAPES[shapeIndex - 1];
-                tetrisX = Math.floor((COLS - currentPiece[0].length) / 2);
-                tetrisY = 0;
-                if (collision(tetrisX, tetrisY, currentPiece)) {
-                    tetrisGameOver();
-                }
-            }
-
-            function collision(x, y, piece) {
-                for (let r = 0; r < piece.length; r++) {
-                    for (let c = 0; c < piece[r].length; c++) {
-                        if (piece[r][c]) {
-                            const newX = x + c;
-                            const newY = y + r;
-                            if (newX < 0 || newX >= COLS || newY >= ROWS) return true;
-                            if (newY >= 0 && tGrid[newY][newX]) return true;
-                        }
-                    }
-                }
-                return false;
-            }
-
-            function mergePiece() {
-                for (let r = 0; r < currentPiece.length; r++) {
-                    for (let c = 0; c < currentPiece[r].length; c++) {
-                        if (currentPiece[r][c]) {
-                            const y = tetrisY + r;
-                            const x = tetrisX + c;
-                            if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
-                                tGrid[y][x] = currentPiece[r][c];
-                            }
-                        }
-                    }
-                }
-            }
-
-            function rotatePiece() {
-                const rotated = currentPiece[0].map((_, i) => currentPiece.map(row => row[i]).reverse());
-                if (!collision(tetrisX, tetrisY, rotated)) {
-                    currentPiece = rotated;
-                }
-            }
-
-            function clearLines() {
-                let lines = 0;
-                for (let r = ROWS - 1; r >= 0; r--) {
-                    if (tGrid[r].every(cell => cell !== 0)) {
-                        tGrid.splice(r, 1);
-                        tGrid.unshift(Array(COLS).fill(0));
-                        lines++;
-                        r++;
-                    }
-                }
-                if (lines > 0) {
-                    tetrisScore += [0, 100, 300, 500, 800][lines] * tetrisLevel;
-                    tetrisLevel = Math.floor(tetrisScore / 1000) + 1;
-                    dropInterval = Math.max(100, 800 - (tetrisLevel - 1) * 80);
-                    tetrisScoreDisplay.textContent = tetrisScore;
-                    tetrisLevelDisplay.textContent = tetrisLevel;
-                }
-            }
-
-            function drawTetrisBlock(x, y, colorIndex) {
-                tCtx.fillStyle = COLORS[colorIndex] || '#333';
-                tCtx.fillRect(x * BLOCK, y * BLOCK, BLOCK - 1, BLOCK - 1);
-                tCtx.fillStyle = 'rgba(255,255,255,0.2)';
-                tCtx.fillRect(x * BLOCK, y * BLOCK, BLOCK - 1, 4);
-                tCtx.fillRect(x * BLOCK, y * BLOCK, 4, BLOCK - 1);
-            }
-
-            function drawTetrisBoard() {
-                tCtx.fillStyle = '#1a1a2e';
-                tCtx.fillRect(0, 0, tCanvas.width, tCanvas.height);
-
-                for (let r = 0; r < ROWS; r++) {
-                    for (let c = 0; c < COLS; c++) {
-                        if (tGrid[r][c]) {
-                            drawTetrisBlock(c, r, tGrid[r][c]);
-                        }
-                    }
-                }
-
-                if (currentPiece) {
-                    for (let r = 0; r < currentPiece.length; r++) {
-                        for (let c = 0; c < currentPiece[r].length; c++) {
-                            if (currentPiece[r][c]) {
-                                drawTetrisBlock(tetrisX + c, tetrisY + r, currentPiece[r][c]);
-                            }
-                        }
-                    }
-                }
-            }
-
-            function tetrisGameOver() {
-                clearInterval(tetrisLoop);
-                tetrisRunning = false;
-                tCtx.fillStyle = 'rgba(0,0,0,0.7)';
-                tCtx.fillRect(0, 0, tCanvas.width, tCanvas.height);
-                tCtx.fillStyle = '#fff';
-                tCtx.font = '30px Arial';
-                tCtx.textAlign = 'center';
-                tCtx.fillText('Game Over!', tCanvas.width / 2, tCanvas.height / 2);
-                tCtx.font = '20px Arial';
-                tCtx.fillText('Skor: ' + tetrisScore, tCanvas.width / 2, tCanvas.height / 2 + 30);
-            }
-
-            function tetrisUpdate() {
-                if (!collision(tetrisX, tetrisY + 1, currentPiece)) {
-                    tetrisY++;
-                } else {
-                    mergePiece();
-                    clearLines();
-                    newPiece();
-                }
-                drawTetrisBoard();
-            }
-
-            function startTetris() {
-                if (tetrisRunning) return;
-                tGrid.forEach(row => row.fill(0));
-                tetrisScore = 0;
-                tetrisLevel = 1;
-                dropInterval = 800;
-                tetrisScoreDisplay.textContent = '0';
-                tetrisLevelDisplay.textContent = '1';
-                newPiece();
-                tetrisRunning = true;
-                drawTetrisBoard();
-                tetrisLoop = setInterval(tetrisUpdate, dropInterval);
-            }
-
-            function resetTetris() {
-                clearInterval(tetrisLoop);
-                tetrisRunning = false;
-                tGrid.forEach(row => row.fill(0));
-                tetrisScore = 0;
-                tetrisLevel = 1;
-                dropInterval = 800;
-                tetrisScoreDisplay.textContent = '0';
-                tetrisLevelDisplay.textContent = '1';
-                currentPiece = null;
-                drawTetrisBoard();
-            }
-
-            startTetrisBtn.addEventListener('click', startTetris);
-            resetTetrisBtn.addEventListener('click', resetTetris);
-
-            document.addEventListener('keydown', (e) => {
-                if (!tetrisRunning || tetrisGame.style.display === 'none') return;
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        if (!collision(tetrisX - 1, tetrisY, currentPiece)) tetrisX--;
-                        break;
-                    case 'ArrowRight':
-                        if (!collision(tetrisX + 1, tetrisY, currentPiece)) tetrisX++;
-                        break;
-                    case 'ArrowDown':
-                        if (!collision(tetrisX, tetrisY + 1, currentPiece)) tetrisY++;
-                        tetrisScore += 1;
-                        tetrisScoreDisplay.textContent = tetrisScore;
-                        break;
-                    case 'ArrowUp':
-                        rotatePiece();
-                        break;
-                    case ' ':
-                        while (!collision(tetrisX, tetrisY + 1, currentPiece)) {
-                            tetrisY++;
-                            tetrisScore += 2;
-                        }
-                        tetrisScoreDisplay.textContent = tetrisScore;
-                        break;
-                }
-                drawTetrisBoard();
-            });
-
-            document.getElementById('tLeftBtn').addEventListener('click', () => { if (tetrisRunning && !collision(tetrisX - 1, tetrisY, currentPiece)) tetrisX--; drawTetrisBoard(); });
-            document.getElementById('tRightBtn').addEventListener('click', () => { if (tetrisRunning && !collision(tetrisX + 1, tetrisY, currentPiece)) tetrisX++; drawTetrisBoard(); });
-            document.getElementById('tRotateBtn').addEventListener('click', () => { if (tetrisRunning) rotatePiece(); drawTetrisBoard(); });
-            document.getElementById('tDownBtn').addEventListener('click', () => { if (tetrisRunning && !collision(tetrisX, tetrisY + 1, currentPiece)) { tetrisY++; tetrisScore += 1; tetrisScoreDisplay.textContent = tetrisScore; } drawTetrisBoard(); });
-            document.getElementById('tDropBtn').addEventListener('click', () => { if (tetrisRunning) { while (!collision(tetrisX, tetrisY + 1, currentPiece)) { tetrisY++; tetrisScore += 2; } tetrisScoreDisplay.textContent = tetrisScore; drawTetrisBoard(); } });
-
-            drawTetrisBoard();
-            renderTasks();
-        })();
-    </script>
+setInterval(()=>{
+  const today = new Date();
+  const key = dateKey(today);
+  if(birthdays[key] && birthdays[key].length){
+    showConfetti();
+  }
+}, 60000);
+</script>
 </body>
 </html>
