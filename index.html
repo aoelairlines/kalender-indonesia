@@ -4,62 +4,71 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Calendar</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
-  body { background: #fdf6f0; min-height: 100vh; padding: 24px; display: flex; justify-content: center; background-image: radial-gradient(circle, #ffb3c1 2px, transparent 2px), radial-gradient(circle, #b3e5fc 2px, transparent 2px); background-size: 40px 40px, 30px 30px; background-position: 0 0, 15px 15px; }
-  .wrap { width: 100%; max-width: 960px; }
-  h1 { text-align: center; color: #1e293b; margin-bottom: 18px; font-size: 1.6rem; }
-  .announce { background: #fff; border-left: 5px solid #6366f1; padding: 18px; border-radius: 10px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-  .announce.empty { border-left-color: #cbd5e1; opacity: 0.7; }
-  .announce h2 { font-size: 1rem; color: #475569; margin-bottom: 6px; }
-  .announce .note-text { color: #1e293b; font-size: 1.1rem; line-height: 1.5; }
-  .announce .note-meta { color: #64748b; font-size: 0.85rem; margin-top: 6px; }
-  .header { display: flex; justify-content: space-between; align-items: center; background: #1e293b; color: white; padding: 14px 18px; border-radius: 10px; margin-bottom: 14px; }
-  .header button { background: #fff; border: none; color: #1e293b; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-  .header button:hover { background: #e2e8f0; }
-  .header .month-label { font-size: 1.15rem; font-weight: bold; }
+  body { background: #fce4ec; min-height: 100vh; padding: 24px; display: flex; justify-content: center; background-image: radial-gradient(circle, #f8bbd0 2.5px, transparent 2.5px); background-size: 32px 32px; }
+  .wrap { width: 100%; max-width: 960px; background: #fff0f5; border-radius: 24px; padding: 28px; border: 4px solid #5d4037; box-shadow: 0 8px 24px rgba(93,64,55,0.15); position: relative; }
+  .wrap::before, .wrap::after { content: '❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀'; display: block; text-align: center; color: #5d4037; font-size: 0.85rem; letter-spacing: 4px; margin: 6px 0; }
+  .wrap::after { content: '❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀'; }
+  .title-area { text-align: center; margin: 18px 0 14px; }
+  .title-area h1 { font-family: 'Dancing Script', cursive; font-size: 2.6rem; font-weight: 700; color: #5d4037; text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(248,187,208,0.6); letter-spacing: 1px; }
+  .title-area .subtitle { font-family: 'Dancing Script', cursive; font-size: 1.1rem; color: #8d6e63; font-weight: 600; margin-top: 2px; letter-spacing: 0.5px; }
+  .announce { background: #fff; border: 2px solid #5d4037; border-radius: 16px; padding: 18px; margin-bottom: 18px; text-align: center; position: relative; }
+  .announce.empty { opacity: 0.6; border-style: dashed; }
+  .announce h2 { font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: #5d4037; margin-bottom: 6px; font-weight: 700; }
+  .announce .note-text { color: #4e342e; font-size: 1.1rem; line-height: 1.5; font-weight: 600; }
+  .announce .note-meta { color: #8d6e63; font-size: 0.85rem; margin-top: 6px; }
+  .header { display: flex; justify-content: space-between; align-items: center; background: #5d4037; color: #fff0f5; padding: 12px 18px; border-radius: 14px; margin-bottom: 14px; border: 2px solid #4e342e; }
+  .header button { background: #fff0f5; border: 2px solid #4e342e; color: #5d4037; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 700; font-family: 'Quicksand', sans-serif; transition: 0.2s; }
+  .header button:hover { background: #f8bbd0; transform: scale(1.05); }
+  .header .month-label { font-size: 1.1rem; font-weight: 700; font-family: 'Dancing Script', cursive; letter-spacing: 0.5px; }
   .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-  .weekdays div { text-align: center; padding: 8px; font-weight: bold; color: #475569; font-size: 0.85rem; }
-  .day { background: white; min-height: 90px; padding: 8px; border-radius: 10px; position: relative; cursor: pointer; border: 2px solid transparent; transition: 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-  .day:hover { border-color: #6366f1; transform: translateY(-1px); }
-  .day.today { border-color: #f59e0b; background: #fffbeb; }
-  .day.holiday { background: #fef2f2; }
-  .day.has-note { background: #eff6ff; }
-  .day .num { font-weight: bold; font-size: 0.95rem; color: #1e293b; }
-  .day .tag { font-size: 0.65rem; margin-top: 4px; color: #b91c1c; word-break: break-word; line-height: 1.2; }
-  .day .note-preview { font-size: 0.65rem; margin-top: 3px; color: #1d4ed8; word-break: break-word; font-weight: 600; line-height: 1.2; }
-  .day .today-badge { position: absolute; top: 6px; right: 6px; background: #f59e0b; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+  .weekdays div { text-align: center; padding: 10px 4px; font-weight: 700; color: #5d4037; font-size: 0.8rem; text-transform: lowercase; letter-spacing: 0.5px; }
+  .day { background: #fff0f5; min-height: 90px; padding: 8px; border-radius: 16px; position: relative; cursor: pointer; border: 2.5px solid #5d4037; transition: 0.2s; box-shadow: 0 2px 4px rgba(93,64,55,0.08); }
+  .day:hover { background: #f8bbd0; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(93,64,55,0.12); }
+  .day.today { background: #fff9c4; border-color: #f57f17; }
+  .day.holiday { background: #ffebee; }
+  .day.has-note { background: #f3e5f5; }
+  .day .num { font-weight: 700; font-size: 0.95rem; color: #4e342e; }
+  .day .tag { font-size: 0.62rem; margin-top: 4px; color: #b71c1c; word-break: break-word; line-height: 1.2; font-weight: 600; }
+  .day .note-preview { font-size: 0.62rem; margin-top: 3px; color: #6a1b9a; word-break: break-word; font-weight: 700; line-height: 1.2; }
+  .day .today-badge { position: absolute; top: 5px; right: 5px; background: #f57f17; color: white; font-size: 0.55rem; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
+  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(93,64,55,0.45); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
   .modal-bg.show { display: flex; }
-  .modal { background: white; padding: 22px; border-radius: 12px; width: 90%; max-width: 420px; }
-  .modal h3 { margin-bottom: 10px; color: #1e293b; }
-  .modal textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; resize: vertical; min-height: 80px; font-family: inherit; font-size: 0.95rem; }
+  .modal { background: #fff0f5; padding: 24px; border-radius: 20px; width: 90%; max-width: 420px; border: 3px solid #5d4037; box-shadow: 0 8px 24px rgba(93,64,55,0.2); }
+  .modal h3 { margin-bottom: 12px; color: #5d4037; font-family: 'Dancing Script', cursive; font-size: 1.5rem; font-weight: 700; }
+  .modal textarea { width: 100%; padding: 12px; margin-bottom: 14px; border: 2px solid #5d4037; border-radius: 12px; resize: vertical; min-height: 90px; font-family: 'Quicksand', sans-serif; font-size: 0.95rem; background: #fff; }
+  .modal textarea:focus { outline: none; background: #fff9c4; }
   .modal .actions { display: flex; gap: 8px; justify-content: flex-end; }
-  .modal button { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-  .modal .save { background: #1e293b; color: white; }
-  .modal .save:hover { background: #334155; }
-  .modal .cancel { background: #e2e8f0; color: #334155; }
-  .modal .delete { background: #ef4444; color: white; }
-  .legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; font-size: 0.85rem; color: #475569; }
-  .legend span { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 5px; }
+  .modal button { padding: 8px 18px; border: 2px solid #5d4037; border-radius: 20px; cursor: pointer; font-weight: 700; font-family: 'Quicksand', sans-serif; transition: 0.2s; }
+  .modal .save { background: #5d4037; color: #fff0f5; }
+  .modal .save:hover { background: #4e342e; transform: scale(1.05); }
+  .modal .cancel { background: #fff0f5; color: #5d4037; }
+  .modal .cancel:hover { background: #f8bbd0; }
+  .modal .delete { background: #fff0f5; color: #c62828; border-color: #c62828; }
+  .modal .delete:hover { background: #ffebee; }
+  .legend { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; font-size: 0.8rem; color: #5d4037; font-weight: 600; justify-content: center; }
+  .legend span { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 5px; border: 1.5px solid #5d4037; }
   @media (max-width: 640px) {
-    .day { min-height: 60px; padding: 6px; }
-    .day .tag, .day .note-preview { font-size: 0.6rem; }
+    .day { min-height: 55px; padding: 5px; border-radius: 10px; }
+    .day .tag, .day .note-preview { font-size: 0.55rem; }
     .header { padding: 10px 12px; }
+    .wrap { padding: 16px; }
+    .title-area h1 { font-size: 2rem; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div style="text-align:center; margin-bottom:18px;">
-    <h1 style="color:#1e293b; margin-bottom:4px; font-size:2.2rem; font-family:'Fredoka',sans-serif; font-weight:700; letter-spacing:1px; text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(255,179,193,0.5);">calendar</h1>
-    <div style="color:#64748b; font-size:0.95rem; font-family:'Fredoka',sans-serif; font-weight:600; letter-spacing:0.5px;">noted your special day</div>
+  <div class="title-area">
+    <h1>calendar</h1>
+    <div class="subtitle">noted your special day</div>
   </div>
 
   <div class="announce" id="announce">
-    <h2>📢 Hari Ini</h2>
-    <div id="announceContent">Belum ada catatan untuk hari ini.</div>
+    <h2>📢 Today</h2>
+    <div id="announceContent">No note for today yet.</div>
   </div>
 
   <div class="header">
@@ -69,46 +78,46 @@
   </div>
 
   <div class="weekdays">
-    <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+    <div>sun</div><div>mon</div><div>tue</div><div>wed</div><div>thu</div><div>fri</div><div>sat</div>
   </div>
   <div class="days" id="days"></div>
 
   <div class="legend">
-    <div><span style="background:#fef2f2"></span>Hari Nasional</div>
-    <div><span style="background:#eff6ff"></span>Ada Catatan</div>
-    <div><span style="background:#fffbeb;border:2px solid #f59e0b"></span>Hari Ini</div>
+    <div><span style="background:#ffebee"></span>Holiday</div>
+    <div><span style="background:#f3e5f5"></span>Has Note</div>
+    <div><span style="background:#fff9c4;border-color:#f57f17"></span>Today</div>
   </div>
 </div>
 
 <div class="modal-bg" id="modal">
   <div class="modal">
-    <h3 id="modalTitle">Catatan</h3>
-    <textarea id="noteInput" placeholder="Tulis catatan di sini..."></textarea>
+    <h3 id="modalTitle">Note</h3>
+    <textarea id="noteInput" placeholder="Write your note here..."></textarea>
     <div class="actions">
-      <button class="delete" id="deleteBtn" style="display:none">Hapus</button>
-      <button class="cancel" id="cancelBtn">Batal</button>
-      <button class="save" id="saveBtn">Simpan</button>
+      <button class="delete" id="deleteBtn" style="display:none">Delete</button>
+      <button class="cancel" id="cancelBtn">Cancel</button>
+      <button class="save" id="saveBtn">Save</button>
     </div>
   </div>
 </div>
 
 <script>
 const holidays = {
-  '01-01': 'Tahun Baru Masehi',
-  '01-07': 'Hari Raya Nyepi',
-  '02-14': 'Hari Kasih Sayang',
-  '03-08': 'Hari Perempuan Internasional',
-  '04-22': 'Hari Bumi',
-  '05-01': 'Hari Buruh Internasional',
-  '05-02': 'Hari Pahlawan',
-  '06-01': 'Hari Lahir Pancasila',
-  '08-17': 'Hari Kemerdekaan RI',
-  '10-02': 'Hari Batik',
-  '10-05': 'Hari Santri',
-  '10-10': 'Hari Kesaktian Pancasila',
-  '11-10': 'Hari Pahlawan',
-  '12-22': 'Hari Ibu',
-  '12-25': 'Hari Raya Natal'
+  '01-01': 'New Year',
+  '01-07': 'Nyepi',
+  '02-14': 'Valentine',
+  '03-08': "Women's Day",
+  '04-22': 'Earth Day',
+  '05-01': 'Labor Day',
+  '05-02': 'Heroes Day',
+  '06-01': 'Pancasila Day',
+  '08-17': 'Independence Day',
+  '10-02': 'Batik Day',
+  '10-05': "Santri Day",
+  '10-10': 'Pancasila Day',
+  '11-10': 'Heroes Day',
+  '12-22': "Mother's Day",
+  '12-25': 'Christmas'
 };
 const indoMonths = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 let current = new Date();
@@ -130,7 +139,7 @@ function renderAnnounce(){
     content.innerHTML = `<div class="note-text">"${escapeHtml(note)}"</div><div class="note-meta">${indoMonths[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}</div>`;
   } else {
     el.classList.add('empty');
-    content.textContent = 'Belum ada catatan untuk hari ini.';
+    content.textContent = 'No note for today yet.';
   }
 }
 
@@ -162,9 +171,9 @@ function render(){
     if(isToday) cls += ' today';
 
     let inner = `<div class="num">${d}</div>`;
-    if(isToday) inner += '<div class="today-badge">HARI INI</div>';
+    if(isToday) inner += '<div class="today-badge">TODAY</div>';
     if(hol) inner += `<div class="tag">${hol}</div>`;
-    if(note) inner += `<div class="note-preview">📝 ${escapeHtml(note.substring(0,35))}${note.length>35?'...':''}</div>`;
+    if(note) inner += `<div class="note-preview">✎ ${escapeHtml(note.substring(0,30))}${note.length>30?'...':''}</div>`;
 
     html += `<div class="${cls}" onclick="openModal(${y},${m},${d})">${inner}</div>`;
   }
@@ -176,7 +185,7 @@ function openModal(y,m,d){
   const dt = new Date(y,m,d);
   selectedDate = dateKey(dt);
   const note = notes[selectedDate] || '';
-  document.getElementById('modalTitle').innerText = 'Catatan - '+pad(d)+' '+indoMonths[m]+' '+y;
+  document.getElementById('modalTitle').innerText = 'Note - '+pad(d)+' '+indoMonths[m]+' '+y;
   document.getElementById('noteInput').value = note;
   document.getElementById('deleteBtn').style.display = note ? 'inline-block' : 'none';
   document.getElementById('modal').classList.add('show');
