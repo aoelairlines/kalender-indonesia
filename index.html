@@ -27,13 +27,12 @@
   .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
   .weekdays div { text-align: center; padding: 10px 4px; font-weight: 700; color: #3d4f5f; font-size: 0.8rem; text-transform: lowercase; letter-spacing: 0.5px; }
   .day { background: #fff; min-height: 90px; padding: 8px; border-radius: 16px; position: relative; cursor: pointer; border: 2.5px solid #b0bec5; transition: 0.2s; box-shadow: 0 2px 4px rgba(120,140,160,0.08); }
-  .day:hover { background: #e8edf2; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(120,140,160,0.12); }
+  .day:hover { filter: brightness(0.95); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(120,140,160,0.12); }
   .day.today { background: #fff9c4; border-color: #b0a000; }
   .day.holiday { background: #fce8e8; }
-  .day.has-note { background: #e8f0e8; }
   .day .num { font-weight: 700; font-size: 0.95rem; color: #3d4f5f; }
   .day .tag { font-size: 0.62rem; margin-top: 4px; color: #7a3d3d; word-break: break-word; line-height: 1.2; font-weight: 600; }
-  .day .note-preview { font-size: 0.62rem; margin-top: 3px; color: #4a6b4a; word-break: break-word; font-weight: 700; line-height: 1.2; padding: 3px 6px; border-radius: 8px; display: inline-block; }
+  .day .note-preview { font-size: 0.62rem; margin-top: 3px; color: #3d4f5f; word-break: break-word; font-weight: 700; line-height: 1.2; padding: 3px 6px; border-radius: 8px; display: inline-block; }
   .day .today-badge { position: absolute; top: 5px; right: 5px; background: #b0a000; color: white; font-size: 0.55rem; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(61,79,95,0.45); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
   .modal-bg.show { display: flex; }
@@ -181,16 +180,18 @@ function render(){
     const note = getNoteText(key);
     const noteColor = getNoteColor(key);
     let cls = 'day';
+    let dayStyle = '';
     if(hol) cls += ' holiday';
     if(hasNote(key)) cls += ' has-note';
     if(isToday) cls += ' today';
+    if(note && noteColor) dayStyle = `style="background:${noteColor}"`;
 
     let inner = `<div class="num">${d}</div>`;
     if(isToday) inner += '<div class="today-badge">TODAY</div>';
     if(hol) inner += `<div class="tag">${hol}</div>`;
-    if(note) inner += `<div class="note-preview" style="background:${noteColor}"><svg width="12" height="10" viewBox="0 0 24 20" style="vertical-align:middle;margin-right:3px"><rect x="1" y="3" width="22" height="16" rx="3" fill="none" stroke="%23556b2f" stroke-width="2"/><polyline points="1,3 12,11 23,3" fill="none" stroke="%23556b2f" stroke-width="2"/><line x1="12" y1="11" x2="12" y2="19" stroke="%23556b2f" stroke-width="2"/></svg>${escapeHtml(note.substring(0,28))}${note.length>28?'...':''}</div>`;
+    if(note) inner += `<div class="note-preview"><svg width="12" height="10" viewBox="0 0 24 20" style="vertical-align:middle;margin-right:3px"><rect x="1" y="3" width="22" height="16" rx="3" fill="none" stroke="%23556b2f" stroke-width="2"/><polyline points="1,3 12,11 23,3" fill="none" stroke="%23556b2f" stroke-width="2"/><line x1="12" y1="11" x2="12" y2="19" stroke="%23556b2f" stroke-width="2"/></svg>${escapeHtml(note.substring(0,28))}${note.length>28?'...':''}</div>`;
 
-    html += `<div class="${cls}" onclick="openModal(${y},${m},${d})">${inner}</div>`;
+    html += `<div class="${cls}" ${dayStyle} onclick="openModal(${y},${m},${d})">${inner}</div>`;
   }
   document.getElementById('days').innerHTML = html;
   renderAnnounce();
