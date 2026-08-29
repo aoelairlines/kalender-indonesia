@@ -174,7 +174,7 @@ function render(){
     let inner = `<div class="num">${d}</div>`;
     if(isToday) inner += '<div class="today-badge">TODAY</div>';
     if(hol) inner += `<div class="tag">${hol}</div>`;
-    if(note) inner += `<div class="note-preview">✎ ${escapeHtml(note.substring(0,30))}${note.length>30?'...':''}</div>`;
+    if(note) inner += `<div class="note-preview"><svg width="12" height="10" viewBox="0 0 24 20" style="vertical-align:middle;margin-right:3px"><rect x="1" y="3" width="22" height="16" rx="3" fill="none" stroke="%23556b2f" stroke-width="2"/><polyline points="1,3 12,11 23,3" fill="none" stroke="%23556b2f" stroke-width="2"/><line x1="12" y1="11" x2="12" y2="19" stroke="%23556b2f" stroke-width="2"/></svg>${escapeHtml(note.substring(0,28))}${note.length>28?'...':''}</div>`;
 
     html += `<div class="${cls}" onclick="openModal(${y},${m},${d})">${inner}</div>`;
   }
