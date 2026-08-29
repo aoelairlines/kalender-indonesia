@@ -3,68 +3,83 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kalender Indonesia</title>
+<title>Kalender Catatan</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-  body { background: #f4f7fb; min-height: 100vh; display: flex; justify-content: center; padding: 24px; }
-  .calendar-wrap { width: 100%; max-width: 900px; }
-  h1 { text-align: center; color: #1a2b4c; margin-bottom: 18px; }
-  .header { display: flex; justify-content: space-between; align-items: center; background: #1a2b4c; color: white; padding: 14px 18px; border-radius: 12px; margin-bottom: 14px; }
-  .header button { background: #fff; border: none; color: #1a2b4c; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-  .header button:hover { background: #dde4f5; }
-  .header .month-label { font-size: 1.2rem; font-weight: bold; }
+  body { background: #f0f4ff; min-height: 100vh; padding: 24px; display: flex; justify-content: center; }
+  .wrap { width: 100%; max-width: 960px; }
+  h1 { text-align: center; color: #1e293b; margin-bottom: 18px; font-size: 1.6rem; }
+  .announce { background: #fff; border-left: 5px solid #6366f1; padding: 18px; border-radius: 10px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .announce.empty { border-left-color: #cbd5e1; opacity: 0.7; }
+  .announce h2 { font-size: 1rem; color: #475569; margin-bottom: 6px; }
+  .announce .note-text { color: #1e293b; font-size: 1.1rem; line-height: 1.5; }
+  .announce .note-meta { color: #64748b; font-size: 0.85rem; margin-top: 6px; }
+  .header { display: flex; justify-content: space-between; align-items: center; background: #1e293b; color: white; padding: 14px 18px; border-radius: 10px; margin-bottom: 14px; }
+  .header button { background: #fff; border: none; color: #1e293b; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  .header button:hover { background: #e2e8f0; }
+  .header .month-label { font-size: 1.15rem; font-weight: bold; }
   .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-  .weekdays div { text-align: center; padding: 8px; font-weight: bold; color: #4a5a7a; }
-  .day { background: white; min-height: 90px; padding: 8px; border-radius: 8px; position: relative; cursor: pointer; border: 2px solid transparent; transition: 0.15s; }
-  .day:hover { border-color: #7aa3ff; }
-  .day.today { border-color: #ff8c00; background: #fff7e6; }
-  .day.holiday { background: #ffe6e6; }
-  .day.has-birthday { background: #fff7cc; }
-  .day .num { font-weight: bold; font-size: 0.95rem; }
-  .day .tag { font-size: 0.68rem; margin-top: 4px; color: #b73e3e; word-break: break-word; }
-  .day .bd-tag { font-size: 0.68rem; margin-top: 2px; color: #8a6d00; word-break: break-word; font-weight: bold; }
-  .day .today-tag { position: absolute; top: 6px; right: 6px; background: #ff8c00; color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 4px; }
+  .weekdays div { text-align: center; padding: 8px; font-weight: bold; color: #475569; font-size: 0.85rem; }
+  .day { background: white; min-height: 90px; padding: 8px; border-radius: 10px; position: relative; cursor: pointer; border: 2px solid transparent; transition: 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .day:hover { border-color: #6366f1; transform: translateY(-1px); }
+  .day.today { border-color: #f59e0b; background: #fffbeb; }
+  .day.holiday { background: #fef2f2; }
+  .day.has-note { background: #eff6ff; }
+  .day .num { font-weight: bold; font-size: 0.95rem; color: #1e293b; }
+  .day .tag { font-size: 0.65rem; margin-top: 4px; color: #b91c1c; word-break: break-word; line-height: 1.2; }
+  .day .note-preview { font-size: 0.65rem; margin-top: 3px; color: #1d4ed8; word-break: break-word; font-weight: 600; line-height: 1.2; }
+  .day .today-badge { position: absolute; top: 6px; right: 6px; background: #f59e0b; color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
   .modal-bg.show { display: flex; }
-  .modal { background: white; padding: 22px; border-radius: 12px; width: 90%; max-width: 400px; }
-  .modal h3 { margin-bottom: 10px; color: #1a2b4c; }
-  .modal input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px; }
+  .modal { background: white; padding: 22px; border-radius: 12px; width: 90%; max-width: 420px; }
+  .modal h3 { margin-bottom: 10px; color: #1e293b; }
+  .modal textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; resize: vertical; min-height: 80px; font-family: inherit; font-size: 0.95rem; }
   .modal .actions { display: flex; gap: 8px; justify-content: flex-end; }
-  .modal button { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; }
-  .modal .save { background: #1a2b4c; color: white; }
-  .modal .cancel { background: #ddd; color: #333; }
-  .modal .delete { background: #c0392b; color: white; }
-  #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 200; display: none; }
-  #birthdayMsg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); font-size: 3rem; font-weight: bold; color: #ff4081; text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(0,0,0,0.2); z-index: 201; transition: transform 0.4s ease; pointer-events: none; white-space: nowrap; }
-  #birthdayMsg.show { transform: translate(-50%, -50%) scale(1); }
-  .legend { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .modal button { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  .modal .save { background: #1e293b; color: white; }
+  .modal .save:hover { background: #334155; }
+  .modal .cancel { background: #e2e8f0; color: #334155; }
+  .modal .delete { background: #ef4444; color: white; }
+  .legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; font-size: 0.85rem; color: #475569; }
   .legend span { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 5px; }
-  @media (max-width: 600px) { .day { min-height: 60px; font-size: 0.8rem; } }
+  @media (max-width: 640px) {
+    .day { min-height: 60px; padding: 6px; }
+    .day .tag, .day .note-preview { font-size: 0.6rem; }
+    .header { padding: 10px 12px; }
+  }
 </style>
 </head>
 <body>
-<div class="calendar-wrap">
-  <h1>📅 Kalender Indonesia</h1>
+<div class="wrap">
+  <h1>📅 Kalender Catatan</h1>
+
+  <div class="announce" id="announce">
+    <h2>📢 Hari Ini</h2>
+    <div id="announceContent">Belum ada catatan untuk hari ini.</div>
+  </div>
+
   <div class="header">
     <button id="prev">◀</button>
     <div class="month-label" id="monthLabel"></div>
     <button id="next">▶</button>
   </div>
+
   <div class="weekdays">
-    <div>Ming</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+    <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
   </div>
   <div class="days" id="days"></div>
+
   <div class="legend">
-    <div><span style="background:#ffe6e6"></span>Hari Nasional</div>
-    <div><span style="background:#fff7cc"></span>Ulang Tahun</div>
-    <div><span style="background:#fff7e6;border:2px solid #ff8c00"></span>Hari Ini</div>
+    <div><span style="background:#fef2f2"></span>Hari Nasional</div>
+    <div><span style="background:#eff6ff"></span>Ada Catatan</div>
+    <div><span style="background:#fffbeb;border:2px solid #f59e0b"></span>Hari Ini</div>
   </div>
 </div>
 
 <div class="modal-bg" id="modal">
   <div class="modal">
-    <h3 id="modalTitle">Tambah Catatan</h3>
-    <input id="noteInput" placeholder="Nama teman / catatan..." />
+    <h3 id="modalTitle">Catatan</h3>
+    <textarea id="noteInput" placeholder="Tulis catatan di sini..."></textarea>
     <div class="actions">
       <button class="delete" id="deleteBtn" style="display:none">Hapus</button>
       <button class="cancel" id="cancelBtn">Batal</button>
@@ -73,35 +88,53 @@
   </div>
 </div>
 
-<div id="confetti"></div>
-<div id="birthdayMsg">🎉 Happy Birthday! 🎉</div>
-
 <script>
 const holidays = {
   '01-01': 'Tahun Baru Masehi',
-  '01-06': 'Hari Raya Nyepi (tetap)',
+  '01-07': 'Hari Raya Nyepi',
   '02-14': 'Hari Kasih Sayang',
   '03-08': 'Hari Perempuan Internasional',
   '04-22': 'Hari Bumi',
   '05-01': 'Hari Buruh Internasional',
-  '05-01': 'Hari Buruh Internasional',
-  '05-05': 'Hari Pahlawan (tetap)',
+  '05-02': 'Hari Pahlawan',
   '06-01': 'Hari Lahir Pancasila',
   '08-17': 'Hari Kemerdekaan RI',
   '10-02': 'Hari Batik',
-  '10-05': 'Hari Hari Santri',
+  '10-05': 'Hari Santri',
   '10-10': 'Hari Kesaktian Pancasila',
-  '11-10': 'Hari Pahlawan (tetap)',
+  '11-10': 'Hari Pahlawan',
   '12-22': 'Hari Ibu',
   '12-25': 'Hari Raya Natal'
 };
 const indoMonths = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 let current = new Date();
-let birthdays = JSON.parse(localStorage.getItem('birthdays') || '{}');
+let notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
 let selectedDate = null;
 
 function pad(n){ return n < 10 ? '0'+n : ''+n; }
-function dateKey(d){ return pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function dateKey(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function dateKeyShort(d){ return pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+function renderAnnounce(){
+  const today = new Date();
+  const key = dateKey(today);
+  const note = notes[key];
+  const el = document.getElementById('announce');
+  const content = document.getElementById('announceContent');
+  if(note){
+    el.classList.remove('empty');
+    content.innerHTML = `<div class="note-text">"${escapeHtml(note)}"</div><div class="note-meta">${indoMonths[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}</div>`;
+  } else {
+    el.classList.add('empty');
+    content.textContent = 'Belum ada catatan untuk hari ini.';
+  }
+}
+
+function escapeHtml(text){
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
 
 function render(){
   const y = current.getFullYear(), m = current.getMonth();
@@ -115,47 +148,49 @@ function render(){
   for(let d=1;d<=daysInMonth;d++){
     const dt = new Date(y,m,d);
     const key = dateKey(dt);
+    const shortKey = dateKeyShort(dt);
     const isToday = dt.toDateString() === today.toDateString();
-    const hol = holidays[key];
-    const bds = birthdays[key];
+    const hol = holidays[shortKey];
+    const note = notes[key];
     let cls = 'day';
     if(hol) cls += ' holiday';
-    if(bds && bds.length) cls += ' has-birthday';
+    if(note) cls += ' has-note';
     if(isToday) cls += ' today';
-    html += `<div class="${cls}" onclick="openModal(${y},${m},${d})">
-      <div class="num">${d}</div>
-      ${isToday?'<div class="today-tag">HARI INI</div>':''}
-      ${hol?`<div class="tag">${hol}</div>`:''}
-      ${bds? bds.map(b=>`<div class="bd-tag">🎂 ${b}</div>`).join(''):''}
-    </div>`;
+
+    let inner = `<div class="num">${d}</div>`;
+    if(isToday) inner += '<div class="today-badge">HARI INI</div>';
+    if(hol) inner += `<div class="tag">${hol}</div>`;
+    if(note) inner += `<div class="note-preview">📝 ${escapeHtml(note.substring(0,35))}${note.length>35?'...':''}</div>`;
+
+    html += `<div class="${cls}" onclick="openModal(${y},${m},${d})">${inner}</div>`;
   }
   document.getElementById('days').innerHTML = html;
+  renderAnnounce();
 }
 
 function openModal(y,m,d){
   const dt = new Date(y,m,d);
   selectedDate = dateKey(dt);
-  const bds = birthdays[selectedDate] || [];
-  const inp = document.getElementById('noteInput');
-  document.getElementById('modalTitle').innerText = 'Catatan '+pad(d)+' '+indoMonths[m]+' '+y;
-  inp.value = bds.length ? bds[0] : '';
-  document.getElementById('deleteBtn').style.display = bds.length ? 'inline-block' : 'none';
+  const note = notes[selectedDate] || '';
+  document.getElementById('modalTitle').innerText = 'Catatan - '+pad(d)+' '+indoMonths[m]+' '+y;
+  document.getElementById('noteInput').value = note;
+  document.getElementById('deleteBtn').style.display = note ? 'inline-block' : 'none';
   document.getElementById('modal').classList.add('show');
+  setTimeout(()=>document.getElementById('noteInput').focus(), 100);
 }
 
 function saveNote(){
   const val = document.getElementById('noteInput').value.trim();
-  if(val){ birthdays[selectedDate] = [val]; }
-  else { delete birthdays[selectedDate]; }
-  localStorage.setItem('birthdays', JSON.stringify(birthdays));
+  if(val){ notes[selectedDate] = val; }
+  else { delete notes[selectedDate]; }
+  localStorage.setItem('calendarNotes', JSON.stringify(notes));
   closeModal();
   render();
-  if(val) showConfetti();
 }
 
 function deleteNote(){
-  delete birthdays[selectedDate];
-  localStorage.setItem('birthdays', JSON.stringify(birthdays));
+  delete notes[selectedDate];
+  localStorage.setItem('calendarNotes', JSON.stringify(notes));
   closeModal();
   render();
 }
@@ -165,27 +200,6 @@ function closeModal(){
   selectedDate = null;
 }
 
-function showConfetti(){
-  const c = document.getElementById('confetti');
-  const msg = document.getElementById('birthdayMsg');
-  c.innerHTML = ''; c.style.display = 'block'; msg.classList.add('show');
-  const colors = ['#ff4081','#ffea00','#00e676','#2979ff','#ff6d00','#d500f9'];
-  for(let i=0;i<120;i++){
-    const el = document.createElement('div');
-    const left = Math.random()*100;
-    const anim = Math.random()*3+2;
-    const color = colors[Math.floor(Math.random()*colors.length)];
-    const size = Math.random()*10+5;
-    el.style.cssText = `position:absolute;top:-20px;left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?'50%':'0'};animation:fall ${anim}s linear forwards;`;
-    c.appendChild(el);
-  }
-  setTimeout(()=>{ c.style.display='none'; msg.classList.remove('show'); }, 4000);
-}
-
-const style = document.createElement('style');
-style.innerHTML = `@keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }`;
-document.head.appendChild(style);
-
 document.getElementById('prev').onclick = ()=>{ current.setMonth(current.getMonth()-1); render(); };
 document.getElementById('next').onclick = ()=>{ current.setMonth(current.getMonth()+1); render(); };
 document.getElementById('saveBtn').onclick = saveNote;
@@ -194,14 +208,6 @@ document.getElementById('deleteBtn').onclick = deleteNote;
 document.getElementById('modal').onclick = (e)=>{ if(e.target.id==='modal') closeModal(); };
 
 render();
-
-setInterval(()=>{
-  const today = new Date();
-  const key = dateKey(today);
-  if(birthdays[key] && birthdays[key].length){
-    showConfetti();
-  }
-}, 60000);
 </script>
 </body>
 </html>
