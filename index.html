@@ -33,7 +33,7 @@
   .day.has-note { background: #e8f0e8; }
   .day .num { font-weight: 700; font-size: 0.95rem; color: #3d4f5f; }
   .day .tag { font-size: 0.62rem; margin-top: 4px; color: #7a3d3d; word-break: break-word; line-height: 1.2; font-weight: 600; }
-  .day .note-preview { font-size: 0.62rem; margin-top: 3px; color: #4a6b4a; word-break: break-word; font-weight: 700; line-height: 1.2; }
+  .day .note-preview { font-size: 0.62rem; margin-top: 3px; color: #4a6b4a; word-break: break-word; font-weight: 700; line-height: 1.2; padding: 3px 6px; border-radius: 8px; display: inline-block; }
   .day .today-badge { position: absolute; top: 5px; right: 5px; background: #b0a000; color: white; font-size: 0.55rem; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(61,79,95,0.45); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
   .modal-bg.show { display: flex; }
@@ -124,6 +124,19 @@ const indoMonths = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Ag
 let current = new Date();
 let notes = JSON.parse(localStorage.getItem('calendarNotes') || '{}');
 let selectedDate = null;
+const pastelColors = ['#ffb3ba','#bae1ff','#baffc9','#ffffba','#ffdfba','#e0bbff','#ffc9de','#c9f0ff'];
+function getNoteColor(key){
+  const item = notes[key];
+  if(item && item.color) return item.color;
+  return null;
+}
+function getNoteText(key){
+  const item = notes[key];
+  return item ? item.text : '';
+}
+function hasNote(key){
+  return !!notes[key];
+}
 
 function pad(n){ return n < 10 ? '0'+n : ''+n; }
 function dateKey(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
@@ -132,7 +145,7 @@ function dateKeyShort(d){ return pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
 function renderAnnounce(){
   const today = new Date();
   const key = dateKey(today);
-  const note = notes[key];
+  const note = getNoteText(key);
   const el = document.getElementById('announce');
   const content = document.getElementById('announceContent');
   if(note){
@@ -165,16 +178,17 @@ function render(){
     const shortKey = dateKeyShort(dt);
     const isToday = dt.toDateString() === today.toDateString();
     const hol = holidays[shortKey];
-    const note = notes[key];
+    const note = getNoteText(key);
+    const noteColor = getNoteColor(key);
     let cls = 'day';
     if(hol) cls += ' holiday';
-    if(note) cls += ' has-note';
+    if(hasNote(key)) cls += ' has-note';
     if(isToday) cls += ' today';
 
     let inner = `<div class="num">${d}</div>`;
     if(isToday) inner += '<div class="today-badge">TODAY</div>';
     if(hol) inner += `<div class="tag">${hol}</div>`;
-    if(note) inner += `<div class="note-preview"><svg width="12" height="10" viewBox="0 0 24 20" style="vertical-align:middle;margin-right:3px"><rect x="1" y="3" width="22" height="16" rx="3" fill="none" stroke="%23556b2f" stroke-width="2"/><polyline points="1,3 12,11 23,3" fill="none" stroke="%23556b2f" stroke-width="2"/><line x1="12" y1="11" x2="12" y2="19" stroke="%23556b2f" stroke-width="2"/></svg>${escapeHtml(note.substring(0,28))}${note.length>28?'...':''}</div>`;
+    if(note) inner += `<div class="note-preview" style="background:${noteColor}"><svg width="12" height="10" viewBox="0 0 24 20" style="vertical-align:middle;margin-right:3px"><rect x="1" y="3" width="22" height="16" rx="3" fill="none" stroke="%23556b2f" stroke-width="2"/><polyline points="1,3 12,11 23,3" fill="none" stroke="%23556b2f" stroke-width="2"/><line x1="12" y1="11" x2="12" y2="19" stroke="%23556b2f" stroke-width="2"/></svg>${escapeHtml(note.substring(0,28))}${note.length>28?'...':''}</div>`;
 
     html += `<div class="${cls}" onclick="openModal(${y},${m},${d})">${inner}</div>`;
   }
@@ -185,7 +199,9 @@ function render(){
 function openModal(y,m,d){
   const dt = new Date(y,m,d);
   selectedDate = dateKey(dt);
-  const note = notes[selectedDate] || '';
+  const item = notes[selectedDate] || {};
+  const note = item.text || '';
+  const color = item.color || pastelColors[Math.floor(Math.random()*pastelColors.length)];
   document.getElementById('modalTitle').innerText = 'Note - '+pad(d)+' '+indoMonths[m]+' '+y;
   document.getElementById('noteInput').value = note;
   document.getElementById('deleteBtn').style.display = note ? 'inline-block' : 'none';
@@ -195,7 +211,10 @@ function openModal(y,m,d){
 
 function saveNote(){
   const val = document.getElementById('noteInput').value.trim();
-  if(val){ notes[selectedDate] = val; }
+  if(val){ 
+    const color = pastelColors[Math.floor(Math.random()*pastelColors.length)];
+    notes[selectedDate] = { text: val, color: color }; 
+  }
   else { delete notes[selectedDate]; }
   localStorage.setItem('calendarNotes', JSON.stringify(notes));
   closeModal();
