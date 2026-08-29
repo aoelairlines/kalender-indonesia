@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kalender Catatan</title>
+<title>Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet" />
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-  body { background: #f0f4ff; min-height: 100vh; padding: 24px; display: flex; justify-content: center; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+  body { background: #fdf6f0; min-height: 100vh; padding: 24px; display: flex; justify-content: center; background-image: radial-gradient(circle, #ffb3c1 2px, transparent 2px), radial-gradient(circle, #b3e5fc 2px, transparent 2px); background-size: 40px 40px, 30px 30px; background-position: 0 0, 15px 15px; }
   .wrap { width: 100%; max-width: 960px; }
   h1 { text-align: center; color: #1e293b; margin-bottom: 18px; font-size: 1.6rem; }
   .announce { background: #fff; border-left: 5px solid #6366f1; padding: 18px; border-radius: 10px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -51,7 +52,10 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>📅 Kalender Catatan</h1>
+  <div style="text-align:center; margin-bottom:18px;">
+    <h1 style="color:#1e293b; margin-bottom:4px; font-size:2.2rem; font-family:'Fredoka',sans-serif; font-weight:700; letter-spacing:1px; text-shadow: 2px 2px 0 #fff, 4px 4px 0 rgba(255,179,193,0.5);">calendar</h1>
+    <div style="color:#64748b; font-size:0.95rem; font-family:'Fredoka',sans-serif; font-weight:600; letter-spacing:0.5px;">noted your special day</div>
+  </div>
 
   <div class="announce" id="announce">
     <h2>📢 Hari Ini</h2>
